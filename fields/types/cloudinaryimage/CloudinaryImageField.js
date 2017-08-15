@@ -14,8 +14,8 @@ import FileChangeMessage from '../../components/FileChangeMessage';
 import HiddenFileInput from '../../components/HiddenFileInput';
 import Lightbox from 'react-images';
 
-const SUPPORTED_TYPES = ['image/*', 'application/pdf', 'application/postscript'];
-const SUPPORTED_REGEX = new RegExp(/^image\/|application\/pdf|application\/postscript/g);
+const SUPPORTED_TYPES = ['image/*', 'video/*', 'application/pdf', 'application/postscript'];
+const SUPPORTED_REGEX = new RegExp(/^image\/|video\/|application\/pdf|application\/postscript/g);
 
 let uploadInc = 1000;
 
@@ -91,11 +91,18 @@ module.exports = Field.create({
 		if (this.hasLocal()) {
 			src = this.state.dataUri;
 		} else if (this.hasExisting()) {
+			const { values: { display } } = this.props;
 			src = cloudinaryResize(this.props.value.public_id, {
 				crop: 'fit',
 				height: height,
 				format: 'jpg',
 			});
+			// cloudinary-microurl does not support resource_type.
+			if (display.resource_type && display.resource_type !== 'image') {
+				src = src.replace('/image/', '/' + display.resource_type + '/');
+			}
+			// Enforce image format.
+			src = src + '.jpg';
 		}
 
 		return src;
@@ -138,7 +145,7 @@ module.exports = Field.create({
 		if (!file) return;
 
 		if (!file.type.match(SUPPORTED_REGEX)) {
-			return alert('Unsupported file type. Supported formats are: GIF, PNG, JPG, BMP, ICO, PDF, TIFF, EPS, PSD, SVG');
+			return alert('Unsupported file type. Supported formats are: GIF, PNG, JPG, BMP, ICO, PDF, TIFF, EPS, PSD, SVG, MP4, MOV');
 		}
 
 		reader.readAsDataURL(file);

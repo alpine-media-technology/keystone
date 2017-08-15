@@ -4,6 +4,7 @@ var ensureCallback = require('keystone-storage-namefunctions/ensureCallback');
 var FieldType = require('../Type');
 var keystone = require('../../../');
 var nameFunctions = require('keystone-storage-namefunctions');
+var path = require('path');
 var prototypeMethods = require('keystone-storage-namefunctions/prototypeMethods');
 var sanitize = require('sanitize-filename');
 var util = require('util');
@@ -337,7 +338,7 @@ function trimSupportedFileExtensions (publicId) {
 		'.jpg', '.jpe', '.jpeg', '.jpc', '.jp2', '.j2k', '.wdp', '.jxr',
 		'.hdp', '.png', '.gif', '.webp', '.bmp', '.tif', '.tiff', '.ico',
 		'.pdf', '.ps', '.ept', '.eps', '.eps3', '.psd', '.svg', '.ai',
-		'.djvu', '.flif', '.tga',
+		'.djvu', '.flif', '.tga', '.mp4', '.mov',
 	];
 	for (var i = 0; i < supportedExtensions.length; i++) {
 		var extension = supportedExtensions[i];
@@ -417,6 +418,7 @@ cloudinaryimage.prototype.updateItem = function (item, data, files, callback) {
 		if (folder) {
 			uploadOptions.folder = folder;
 		}
+		var file = _.values(files)[0];
 		this.getFilename(uploadedFile, function (err, filename) {
 			if (err) return callback(err);
 			// If an undefined filename is returned, Cloudinary will automatically generate a unique
@@ -424,6 +426,9 @@ cloudinaryimage.prototype.updateItem = function (item, data, files, callback) {
 			if (filename !== undefined) {
 				filename = sanitize(filename);
 				uploadOptions.public_id = trimSupportedFileExtensions(filename);
+			}
+			if (file && file.mimetype.startsWith('video/')) {
+				uploadOptions.resource_type = 'video';
 			}
 			// TODO: implement autoCleanup; should delete existing images before uploading
 			cloudinary.uploader.upload(uploadedFile.path, function (result) {
