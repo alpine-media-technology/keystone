@@ -98,7 +98,7 @@ module.exports = Field.create({
 				format: 'jpg',
 			});
 			// cloudinary-microurl does not support resource_type.
-			if (display.resource_type && display.resource_type !== 'image') {
+			if (display && display.resource_type && display.resource_type !== 'image') {
 				src = src.replace('/image/', '/' + display.resource_type + '/');
 			}
 			// Enforce image format.
