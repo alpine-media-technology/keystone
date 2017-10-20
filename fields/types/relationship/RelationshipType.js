@@ -222,9 +222,11 @@ relationship.prototype.updateItem = function (item, data, callback) {
 	}
 
 	var value = this.getValueFromData(data);
-	if (value === undefined) {
-		return process.nextTick(callback);
-	}
+	// FIXME: This check is busted. An empty relationship is not sent from the client.
+	// Commenting this out will definitely break things during partial record updates!
+	// if (value === undefined) {
+	// 	return process.nextTick(callback);
+	// }
 
 	// Are we handling a many relationship or just one value?
 	if (this.many) {
