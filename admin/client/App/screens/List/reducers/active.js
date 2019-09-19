@@ -37,7 +37,7 @@ function active (state = initialState, action) {
 			return assign({}, state, {
 				id: action.id,
 				columns: action.list.expandColumns(action.list.defaultColumns),
-				filters: [],
+				filters: action.list.expandFilters(action.list.defaultFilters),
 				search: '',
 				sort: action.list.expandSort(action.list.defaultSort),
 			});

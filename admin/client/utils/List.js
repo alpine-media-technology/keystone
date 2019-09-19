@@ -178,6 +178,20 @@ List.prototype.expandColumns = function (input) {
 	return cols;
 };
 
+List.prototype.expandFilters = function (input) {
+	if (typeof input !== 'object') {
+		return []
+	}
+	const { fields } = this;
+	return Object.keys(input).reduce(function (result, path) {
+		const field = fields[path];
+		return result.concat({
+			field: field,
+			value: { value: input[path] }
+		})
+	}, [])
+}
+
 List.prototype.expandSort = function (input) {
 	const sort = {
 		rawInput: input || this.defaultSort,
