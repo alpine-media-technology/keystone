@@ -136,14 +136,20 @@ module.exports = Field.create({
 		this.loadOptionsCallback = callback;
 		const filters = this.buildFilters();
 		xhr({
-			url: Keystone.adminPath + '/api/' + this.props.refList.path + '?basic&search=' + input + '&' + filters,
+			url: Keystone.adminPath + '/api/' + this.props.refList.path + '?basic&populate=resort&search=' + input + '&' + filters,
 			responseType: 'json',
 		}, (err, resp, data) => {
 			if (err) {
 				console.error('Error loading items:', err);
 				return callback(null, []);
 			}
-			data.results.forEach(this.cacheItem);
+			// This is a hack to support a specific use case.
+			data.results.forEach(item => {
+				if (item.fields.resort && item.fields.resort.name) {
+					item.name += ' (' + item.fields.resort.name + ')';
+				}
+				this.cacheItem(item);
+			});
 			callback(null, {
 				options: data.results,
 				complete: data.results.length === data.count,
