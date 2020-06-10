@@ -6,7 +6,7 @@ Contains a standard set of strings for storing an address, and a longitude / lat
 
 Also provides autocomplete functionality using Google's Places API (requires a Google Maps API Key to be provided, must only be used in accordance with Google's terms of service).
 
-Google Places integration requires the `google api key` option to be set for Keystone. See the [Google configuration documentation](http://keystonejs.com/docs/configuration/#services-google) for details.
+Google Places integration requires the `google api key` option to be set for Keystone. See the [Google configuration documentation](http://v4.keystonejs.com/docs/configuration/#services-google) for details.
 
 ```
 { type: Types.Location, defaults: { country: 'Australia' } }
@@ -39,6 +39,20 @@ Google Places integration requires the `google api key` option to be set for Key
 `geo` `Array` longitude, latitude
 
 > Important: as per the MongoDB convention, the order for the geo array must be lng, lat which is the opposite of the order used by Google's API.
+
+`enableImprove` `boolean`
+
+Options sets `enableMapsAPI` to true. If it is not set, `enableMapsAPI` is set to true if `google server api key` is set in keystone.
+
+`required` `Array or String or Boolean`
+
+Required works differently for location than for most other properties. There are three different types of require.
+
+If passed an `array`, it uses it to set which parts of the location field are required.
+
+If passed a comma-separated-value `string`, it will transform it into an array of required parts of the location field.
+
+If any positive value is passed in, the location field becomes required for validation, including either of the above options.
 
 ## Underscore methods
 

@@ -96,6 +96,7 @@ module.exports = Field.create({
 				crop: 'fit',
 				height: height,
 				format: 'jpg',
+				secure: this.props.secure,
 			});
 			// cloudinary-microurl does not support resource_type.
 			if (display && display.resource_type && display.resource_type !== 'image') {
@@ -293,13 +294,18 @@ module.exports = Field.create({
 		);
 	},
 
+	// This renders a hidden input that holds the payload data for how the field
+	// should be updated. It should be upload:{filename}, undefined, or 'remove'
 	renderActionInput () {
 		if (!this.shouldRenderField()) return null;
 
 		if (this.state.userSelectedFile || this.state.removeExisting) {
-			const value = this.state.userSelectedFile
-				? `upload:${this.state.uploadFieldPath}`
-				: '';
+			let value = '';
+			if (this.state.userSelectedFile) {
+				value = `upload:${this.state.uploadFieldPath}`;
+			} else if (this.state.removeExisting && this.props.autoCleanup) {
+				value = 'delete';
+			}
 			return (
 				<input
 					name={this.getInputName(this.props.path)}

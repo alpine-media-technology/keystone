@@ -60,7 +60,7 @@ function cloudinaryimage (list, path, options) {
 		throw new Error(
 			'Invalid Configuration\n\n'
 			+ 'CloudinaryImage fields (' + list.key + '.' + this.path + ') require the "cloudinary config" option to be set.\n\n'
-			+ 'See http://keystonejs.com/docs/configuration/#services-cloudinary for more information.\n'
+			+ 'See http://v4.keystonejs.com/docs/configuration/#services-cloudinary for more information.\n'
 		);
 	}
 }
@@ -278,6 +278,21 @@ cloudinaryimage.prototype.getData = function (item) {
 	return typeof value === 'object' ? value : {};
 };
 
+cloudinaryimage.prototype._originalGetOptions = cloudinaryimage.prototype.getOptions;
+
+cloudinaryimage.prototype.getOptions = function () {
+	this._originalGetOptions();
+	// We are performing the check here, so that if cloudinary secure is added
+	// to keystone after the model is registered, it will still be respected.
+	// Setting secure overrides default `cloudinary secure`
+	if ('secure' in this.options) {
+		this.__options.secure = this.options.secure;
+	} else if (keystone.get('cloudinary secure')) {
+		this.__options.secure = keystone.get('cloudinary secure');
+	}
+	return this.__options;
+};
+
 /**
  * Detects whether the field has been modified
  */
@@ -371,8 +386,8 @@ cloudinaryimage.prototype.updateItem = function (item, data, files, callback) {
 	var value = this.getValueFromData(data);
 	var uploadedFile;
 
-	// Providing the string "remove" removes the file and resets the field
-	if (value === 'remove') {
+	// Providing the string "remove" or "delete" removes the file and resets the field
+	if (value === 'remove' || value === 'delete') {
 		cloudinary.uploader.destroy(item.get(field.paths.public_id), function (result) {
 			if (result.error) {
 				callback(result.error);
@@ -430,7 +445,6 @@ cloudinaryimage.prototype.updateItem = function (item, data, files, callback) {
 			if (file && file.mimetype.startsWith('video/')) {
 				uploadOptions.resource_type = 'video';
 			}
-			// TODO: implement autoCleanup; should delete existing images before uploading
 			cloudinary.uploader.upload(uploadedFile.path, function (result) {
 				if (result.error) {
 					return callback(result.error);
