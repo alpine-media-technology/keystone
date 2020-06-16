@@ -63,7 +63,7 @@ var EditForm = React.createClass({
 		var hasAsyncFields = !!this.props.list.columns.find(col => {
 			if (col.field && col.field.type === 'relationship') {
 				var fieldData = this.props.data.fields[col.field.path];
-				return col.field.many ? fieldData.length > 0 : fieldData;
+				return col.field.many && fieldData ? fieldData.length > 0 : fieldData;
 			} else {
 				return false;
 			}
