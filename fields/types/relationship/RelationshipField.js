@@ -133,8 +133,15 @@ module.exports = Field.create({
 		// NOTE: this seems like the wrong way to add options to the Select
 		this.loadOptionsCallback = callback;
 		const filters = this.buildFilters();
+		const list = listsByKey[this.props.refList.key];
+
+		// This is a hack to support a specific use case.
+		if (list.fields.resort && list.fields.resort.type === 'relationship') {
+			input += '&populate=resort';
+		}
+
 		xhr({
-			url: Keystone.adminPath + '/api/' + this.props.refList.path + '?basic&populate=resort&search=' + input + '&' + filters,
+			url: Keystone.adminPath + '/api/' + this.props.refList.path + '?basic&search=' + input + '&' + filters,
 			responseType: 'json',
 		}, (err, resp, data) => {
 			if (err) {
