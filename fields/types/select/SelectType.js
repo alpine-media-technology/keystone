@@ -64,7 +64,7 @@ select.prototype.addToSchema = function (schema) {
 		type: this._nativeType,
 		enum: this.values,
 		set: function (val) {
-			return (val === '' || val === null || val === false) ? undefined : val;
+			return (val === '' || val === false) ? null : val;
 		},
 	}, this.options));
 	schema.virtual(this.paths.data).get(function () {
