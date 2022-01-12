@@ -44,7 +44,7 @@ module.exports = function (req, res) {
 			if (!includeCount) {
 				return next(null, 0);
 			}
-			req.list.model.count(where, next);
+			req.list.model.estimatedDocumentCount(where, next);
 		},
 		function (count, next) {
 			if (!includeResults) {
