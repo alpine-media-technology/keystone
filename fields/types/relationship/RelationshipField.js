@@ -207,6 +207,7 @@ module.exports = Field.create({
 				<input type="text" style={{ position: 'absolute', width: 1, height: 1, zIndex: -1, opacity: 0 }} tabIndex="-1"/>
 				<Select.Async
 					multi={this.props.many}
+					toggleOnOptionSelect={false}
 					disabled={noedit}
 					loadOptions={this.loadOptions}
 					labelKey="name"

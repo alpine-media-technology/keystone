@@ -90,7 +90,7 @@
     "react-redux": "^5.0.6",
     "react-router": "^3.0.2",
     "react-router-redux": "^4.0.8",
-    "react-select": "^1.2.4",
+    "react-select": "git+https://github.com/alpine-media-technology/react-select.git#multi-select-duplicates",
     "redux": "^3.7.2",
     "redux-saga": "^0.15.6",
     "redux-thunk": "^2.2.0",
