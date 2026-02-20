@@ -83,7 +83,12 @@ password.prototype.addToSchema = function (schema) {
 		this[needs_hashing] = false;
 	});
 
-	schema.pre('save', function (next) {
+	schema.pre('save', function () {
+		var next
+		new Promise((resolve, reject) => {
+			next = (err, ...rest) => err ? reject(err) : resolve(...rest)
+		})
+
 		if (!this.isModified(field.path) || !this[needs_hashing]) {
 			return next();
 		}

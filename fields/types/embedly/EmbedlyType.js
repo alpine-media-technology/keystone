@@ -114,7 +114,12 @@ embedly.prototype.addToSchema = function(schema) {
 
 	// Bind the pre-save hook to hit the embedly api if the source path has changed
 
-	schema.pre("save", function(next) {
+	schema.pre("save", function() {
+		var next
+		new Promise((resolve, reject) => {
+			next = (err, ...rest) => err ? reject(err) : resolve(...rest)
+		})
+
 		if (!this.isModified(field.fromPath)) {
 			return next();
 		}

@@ -33,7 +33,7 @@ module.exports = function (req, res, next) {
 	}
 	var sort = req.list.expandSort(req.query.sort);
 	query.sort(sort.string);
-	query.exec()
+	query
 		.then(function (results) {
 			var data;
 			var fields = [];

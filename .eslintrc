@@ -1,6 +1,5 @@
 {
   "extends": [
-     "keystone-react"
   ],
   "rules": {
     "react/jsx-no-bind": 0

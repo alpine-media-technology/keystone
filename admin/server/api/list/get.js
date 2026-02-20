@@ -44,7 +44,7 @@ module.exports = function (req, res) {
 			if (!includeCount) {
 				return next(null, 0);
 			}
-			req.list.model.estimatedDocumentCount(where, next);
+			req.list.model.estimatedDocumentCount(where).then((count) => next(null, count)).catch(next);
 		},
 		function (count, next) {
 			if (!includeResults) {
@@ -55,8 +55,10 @@ module.exports = function (req, res) {
 			if (sort.string) {
 				query.sort(sort.string);
 			}
-			query.exec(function (err, items) {
-				next(err, count, items);
+			query.then(function (items) {
+				next(null, count, items);
+			}).catch((err) => {
+				next(err);
 			});
 		},
 	], function (err, count, items) {

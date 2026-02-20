@@ -17,9 +17,7 @@ module.exports = function (req, res) {
 		return res.status(401).json({ error: 'fields must be undefined, a string, or an array' });
 	}
 
-	query.exec(function (err, item) {
-
-		if (err) return res.status(500).json({ err: 'database error', detail: err });
+	query.then(function (item) {
 		if (!item) return res.status(404).json({ err: 'not found', id: req.params.id });
 
 		var tasks = [];
@@ -53,9 +51,9 @@ module.exports = function (req, res) {
 						if (!item.get(field.path).length) {
 							return done();
 						}
-						refList.model.find().where('_id').in(item.get(field.path)).limit(4).exec(function (err, results) {
-							if (err || !results) {
-								done(err);
+						refList.model.find().where('_id').in(item.get(field.path)).limit(4).then(function (results) {
+							if (!results) {
+								done();
 							}
 							var more = (results.length === 4) ? results.pop() : false;
 							if (results.length) {
@@ -72,12 +70,14 @@ module.exports = function (req, res) {
 								});
 							}
 							done();
+						}).catch((err) => {
+							done(err);
 						});
 					} else {
 						if (!item.get(field.path)) {
 							return done();
 						}
-						refList.model.findById(item.get(field.path)).exec(function (err, result) {
+						refList.model.findById(item.get(field.path)).then(function (result) {
 							if (result) {
 								// drilldown.data[path] = result;
 								drilldown.items.push({
@@ -88,10 +88,11 @@ module.exports = function (req, res) {
 									}],
 								});
 							}
+							done();
+						}).catch((err) => {
 							done(err);
 						});
 					}
-
 				}, function (err) {
 					// put the drilldown list back in the right order
 					drilldown.def.reverse();
@@ -114,5 +115,7 @@ module.exports = function (req, res) {
 				drilldown: drilldown,
 			}));
 		});
+	}).catch((err) => {
+		return res.status(500).json({ err: 'database error', detail: err });
 	});
 };

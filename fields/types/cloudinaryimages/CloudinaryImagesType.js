@@ -202,7 +202,7 @@ cloudinaryimages.prototype.addToSchema = function (schema) {
 		}
 		images.splice(id, 1);
 		if (callback) {
-			item.save((typeof callback !== 'function') ? callback : undefined);
+			item.save().then(() => callback()).catch(callback);
 		}
 	};
 	this.underscoreMethod('remove', function (id, callback) {

@@ -112,11 +112,10 @@ location.prototype.addToSchema = function (schema) {
 
 	// pre-save hook to fix blank geo fields
 	// see http://stackoverflow.com/questions/16388836/does-applying-a-2dsphere-index-on-a-mongoose-schema-force-the-location-field-to
-	schema.pre('save', function (next) {
+	schema.pre('save', function () {
 		var obj = field._path.get(this);
 		var geo = (obj.geo || []).map(Number).filter(_.isFinite);
 		obj.geo = (geo.length === 2) ? geo : undefined;
-		next();
 	});
 
 	this.bindUnderscoreMethods();
